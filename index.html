@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>San Roque National High School | Assessment Performance Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        font-family: Aptos, Arial, Calibri, sans-serif;
+        background: #f4f6f9;
+        color: #243447;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+        background: #17365d;
+        color: white;
+        padding: 32px 48px;
+        border-bottom: 4px solid #4472c4;
+    }
+
+    .school-name {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        margin-bottom: 8px;
+        opacity: 0.92;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 29px;
+        font-weight: 700;
+    }
+
+    header p {
+        margin: 9px 0 0;
+        font-size: 14px;
+        opacity: 0.88;
+    }
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+
+    nav {
+        background: white;
+        border-bottom: 1px solid #d9dee5;
+        padding: 11px 35px;
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    nav button {
+        border: none;
+        background: #eef2f7;
+        color: #34495e;
+        padding: 9px 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13px;
+    }
+
+    nav button:hover {
+        background: #dbe6f3;
+        color: #17365d;
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 30px;
+    }
+
+    .section {
+        background: white;
+        border: 1px solid #dce2e8;
+        border-radius: 8px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 2px 7px rgba(0,0,0,0.04);
+    }
+
+    .section-title {
+        font-size: 22px;
+        color: #17365d;
+        margin: 0 0 6px;
+        font-weight: 700;
+    }
+
+    .section-subtitle {
+        color: #657383;
+        font-size: 14px;
+        margin: 0 0 24px;
+        line-height: 1.5;
+    }
+
+    /* =========================
+       SUMMARY CARDS
+    ========================= */
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .card {
+        background: #f8fafc;
+        border: 1px solid #dce2e8;
+        border-radius: 7px;
+        padding: 20px;
+    }
+
+    .card-label {
+        font-size: 13px;
+        color: #687788;
+        margin-bottom: 8px;
+    }
+
+    .card-value {
+        font-size: 27px;
+        font-weight: 700;
+        color: #17365d;
+    }
+
+    .card-note {
+        font-size: 12px;
+        color: #687788;
+        margin-top: 5px;
+    }
+
+    /* =========================
+       CHARTS
+    ========================= */
+
+    .chart-box {
+        position: relative;
+        width: 100%;
+        height: 390px;
+    }
+
+    /* =========================
+       ANALYSIS BOXES
+    ========================= */
+
+    .analysis {
+        margin-top: 24px;
+        border-left: 5px solid #4472c4;
+        background: #f5f8fc;
+        padding: 17px 20px;
+        border-radius: 4px;
+    }
+
+    .analysis h3 {
+        margin: 0 0 7px;
+        color: #17365d;
+        font-size: 16px;
+    }
+
+    .analysis p {
+        margin: 0;
+        line-height: 1.65;
+        font-size: 14px;
+    }
+
+    .remediation {
+        margin-top: 15px;
+        border-left: 5px solid #70ad47;
+        background: #f4f8f1;
+        padding: 17px 20px;
+        border-radius: 4px;
+    }
+
+    .remediation h3 {
+        margin: 0 0 7px;
+        color: #385723;
+        font-size: 16px;
+    }
+
+    .remediation p {
+        margin: 0;
+        line-height: 1.65;
+        font-size: 14px;
+    }
+
+    /* =========================
+       HEATMAP
+    ========================= */
+
+    .heatmap-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    th {
+        background: #17365d;
+        color: white;
+        padding: 12px 10px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    td {
+        border: 1px solid #dce2e8;
+        padding: 11px 10px;
+        text-align: center;
+    }
+
+    td:first-child {
+        text-align: left;
+        font-weight: 600;
+        background: #f7f9fb;
+    }
+
+    .heat {
+        font-weight: 600;
+    }
+
+    .heat-high {
+        background: #d9ead3;
+    }
+
+    .heat-mid {
+        background: #fff2cc;
+    }
+
+    .heat-low {
+        background: #f4cccc;
+    }
+
+    /* =========================
+       CLASSIFICATION
+    ========================= */
+
+    .selector-area {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .selector-area label {
+        font-weight: 600;
+        color: #34495e;
+    }
+
+    select {
+        padding: 9px 13px;
+        border: 1px solid #b9c3ce;
+        border-radius: 5px;
+        background: white;
+        font-family: inherit;
+        font-size: 14px;
+    }
+
+    /* =========================
+       FINDINGS
+    ========================= */
+
+    .finding-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 22px;
+    }
+
+    .finding {
+        border: 1px solid #dce2e8;
+        border-radius: 7px;
+        padding: 20px;
+        background: #fafbfc;
+    }
+
+    .finding h3 {
+        margin: 0 0 8px;
+        color: #17365d;
+        font-size: 16px;
+    }
+
+    .finding p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    /* =========================
+       DATA NOTES
+    ========================= */
+
+    .note {
+        margin-top: 18px;
+        padding: 15px;
+        background: #fff8e6;
+        border: 1px solid #ead8a2;
+        border-radius: 5px;
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+        text-align: center;
+        color: #788594;
+        padding: 20px;
+        font-size: 12px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 900px) {
+
+        .cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .finding-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @media (max-width: 600px) {
+
+        header {
+            padding: 24px;
+        }
+
+        header h1 {
+            font-size: 23px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        .cards {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-box {
+            height: 330px;
+        }
+
+    }
+
+</style>
+</head>
+
+
+<body>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+    <div class="school-name">
+        SAN ROQUE NATIONAL HIGH SCHOOL
+    </div>
+
+    <h1>
+        School Assessment Performance Dashboard
+    </h1>
+
+    <p>
+        Assessment Results for Grades 7–10 | Learning Areas and Learner Performance Classification
+    </p>
+
+</header>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+<nav>
+
+    <button onclick="goTo('overview')">
+        Overview
+    </button>
+
+    <button onclick="goTo('grade')">
+        Grade Level
+    </button>
+
+    <button onclick="goTo('learning')">
+        Learning Areas
+    </button>
+
+    <button onclick="goTo('heatmap')">
+        Grade × Learning Area
+    </button>
+
+    <button onclick="goTo('classification')">
+        Learner Classification
+    </button>
+
+    <button onclick="goTo('response')">
+        Assessment Response
+    </button>
+
+</nav>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     OVERVIEW
+===================================================== -->
+
+<section class="section" id="overview">
+
+    <h2 class="section-title">
+        Assessment Overview
+    </h2>
+
+    <p class="section-subtitle">
+        Summary of the assessment results for Grades 7–10.
+    </p>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="card-label">
+                Grade 7 Overall MPS
+            </div>
+
+            <div class="card-value">
+                81.91
+            </div>
+
+            <div class="card-note">
+                Mean Percentage Score
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-label">
+                Grade 8 Overall MPS
+            </div>
+
+            <div class="card-value">
+                81.78
+            </div>
+
+            <div class="card-note">
+                Mean Percentage Score
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-label">
+                Grade 9 Overall MPS
+            </div>
+
+            <div class="card-value">
+                83.64
+            </div>
+
+            <div class="card-note">
+                Mean Percentage Score
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-label">
+                Grade 10 Overall MPS
+            </div>
+
+            <div class="card-value">
+                84.13
+            </div>
+
+            <div class="card-note">
+                Mean Percentage Score
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="analysis">
+
+        <h3>
+            Analysis and Interpretation
+        </h3>
+
+        <p>
+            The assessment results show MPS values ranging from 81.78 to 84.13 across the four grade levels. The results provide a general reference for understanding learner achievement and may support the planning of succeeding instructional activities. The findings may also be considered in the implementation of existing remediation programs, particularly where the assessment indicates that learners may benefit from continued reinforcement of the competencies assessed.
+        </p>
+
+    </div>
+
+
+</section>
+
+
+<!-- =====================================================
+     OVERALL MPS BY GRADE
+===================================================== -->
+
+<section class="section" id="grade">
+
+    <h2 class="section-title">
+        Overall Mean Percentage Score by Grade Level
+    </h2>
+
+    <p class="section-subtitle">
+        Overall MPS computed for each grade level.
+    </p>
+
+
+    <div class="chart-box">
+
+        <canvas id="gradeChart"></canvas>
+
+    </div>
+
+
+    <div class="analysis">
+
+        <h3>
+            Analysis and Interpretation
+        </h3>
+
+        <p>
+            The results show a relatively close range of overall MPS across Grades 7–10. The figures provide a reference for reviewing the competencies assessed at each grade level and considering where continued instructional reinforcement may be appropriate.
+        </p>
+
+    </div>
+
+
+    <div class="remediation">
+
+        <h3>
+            Assessment and Instructional Response
+        </h3>
+
+        <p>
+            The results may be considered in the implementation of existing remediation programs by providing additional learning opportunities for learners who may require further reinforcement of the competencies assessed. Succeeding assessment results may be used to monitor learner progress and inform succeeding instructional planning.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MPS BY LEARNING AREA
+===================================================== -->
+
+<section class="section" id="learning">
+
+    <h2 class="section-title">
+        Mean Percentage Score by Learning Area
+    </h2>
+
+    <p class="section-subtitle">
+        Overall MPS for each learning area across Grades 7–10.
+    </p>
+
+
+    <div class="chart-box">
+
+        <canvas id="subjectChart"></canvas>
+
+    </div>
+
+
+    <div class="analysis">
+
+        <h3>
+            Analysis and Interpretation
+        </h3>
+
+        <p>
+            The results provide an overview of learner achievement across the different learning areas. The MPS figures may be used as a reference in reviewing the competencies assessed and in identifying areas where continued reinforcement may be beneficial. The results are intended to inform instructional planning rather than serve as a comparison among learning areas.
+        </p>
+
+    </div>
+
+
+    <div class="remediation">
+
+        <h3>
+            Assessment and Instructional Response
+        </h3>
+
+        <p>
+            Existing remediation programs may provide additional opportunities for learners based on the competencies reflected in the assessment results. The findings can help guide the selection of competencies for reinforcement while allowing learning areas to continue supporting practices that contribute to learner progress.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     GRADE × LEARNING AREA
+===================================================== -->
+
+<section class="section" id="heatmap">
+
+    <h2 class="section-title">
+        Mean Percentage Score by Grade Level and Learning Area
+    </h2>
+
+    <p class="section-subtitle">
+        Detailed view of the 32 grade-level and learning-area MPS results.
+    </p>
+
+
+    <div class="heatmap-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Learning Area
+                    </th>
+
+                    <th>
+                        Grade 7
+                    </th>
+
+                    <th>
+                        Grade 8
+                    </th>
+
+                    <th>
+                        Grade 9
+                    </th>
+
+                    <th>
+                        Grade 10
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        English
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.92
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.22
+                    </td>
+
+                    <td class="heat heat-high">
+                        84.23
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.68
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Mathematics
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.02
+                    </td>
+
+                    <td class="heat heat-low">
+                        78.94
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.24
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.72
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Science
+                    </td>
+
+                    <td class="heat heat-mid">
+                        82.08
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.39
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.82
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.45
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Filipino
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.00
+                    </td>
+
+                    <td class="heat heat-high">
+                        82.65
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.93
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.95
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        TLE
+                    </td>
+
+                    <td class="heat heat-mid">
+                        82.37
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.09
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.07
+                    </td>
+
+                    <td class="heat heat-mid">
+                        81.52
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        MAPEH
+                    </td>
+
+                    <td class="heat heat-high">
+                        84.00
+                    </td>
+
+                    <td class="heat heat-high">
+                        82.82
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.90
+                    </td>
+
+                    <td class="heat heat-high">
+                        89.02
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Araling Panlipunan
+                    </td>
+
+                    <td class="heat heat-mid">
+                        80.77
+                    </td>
+
+                    <td class="heat heat-high">
+                        85.03
+                    </td>
+
+                    <td class="heat heat-high">
+                        83.54
+                    </td>
+
+                    <td class="heat heat-high">
+                        85.84
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Values Education
+                    </td>
+
+                    <td class="heat heat-mid">
+                        82.10
+                    </td>
+
+                    <td class="heat heat-high">
+                        86.07
+                    </td>
+
+                    <td class="heat heat-high">
+                        86.40
+                    </td>
+
+                    <td class="heat heat-high">
+                        85.86
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div class="analysis">
+
+        <h3>
+            Analysis and Interpretation
+        </h3>
+
+        <p>
+            The detailed results show differences in MPS according to the grade level and learning area represented in the assessment. The figures provide useful points for reviewing the competencies assessed and understanding where learners may benefit from additional reinforcement. The results may therefore be considered alongside classroom assessment information when planning succeeding instructional support.
+        </p>
+
+    </div>
+
+
+    <div class="remediation">
+
+        <h3>
+            Assessment and Instructional Response
+        </h3>
+
+        <p>
+            Existing remediation programs may be aligned with the competencies identified through the assessment results. This allows additional learning opportunities to be provided according to the needs reflected in the data while giving teachers and school personnel a basis for monitoring learner progress in succeeding assessments.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     LEARNER CLASSIFICATION
+===================================================== -->
+
+<section class="section" id="classification">
+
+    <h2 class="section-title">
+        Learner Performance Classification by Learning Area
+    </h2>
+
+    <p class="section-subtitle">
+        Select a grade level to view the distribution of learners across the reported performance classifications.
+    </p>
+
+
+    <div class="selector-area">
+
+        <label for="gradeSelect">
+            Grade Level:
+        </label>
+
+        <select id="gradeSelect" onchange="updateClassification()">
+
+            <option value="7">
+                Grade 7
+            </option>
+
+            <option value="8" selected>
+                Grade 8
+            </option>
+
+            <option value="9">
+                Grade 9
+            </option>
+
+            <option value="10">
+                Grade 10
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="chart-box">
+
+        <canvas id="classificationChart"></canvas>
+
+    </div>
+
+
+    <div id="classificationAnalysis" class="analysis">
+    </div>
+
+
+    <div id="classificationRemediation" class="remediation">
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ASSESSMENT RESPONSE
+===================================================== -->
+
+<section class="section" id="response">
+
+    <h2 class="section-title">
+        Assessment Findings and Instructional Response
+    </h2>
+
+    <p class="section-subtitle">
+        Selected assessment findings that may inform existing remediation programs.
+    </p>
+
+
+    <div class="finding-grid">
+
+
+        <div class="finding">
+
+            <h3>
+                Grade 8 Mathematics
+            </h3>
+
+            <p>
+                The assessment records an MPS of 78.94, with 29.70% of learners within the Developing classification. The result may provide a basis for reviewing the competencies assessed and considering additional learning opportunities through existing remediation programs.
+            </p>
+
+        </div>
+
+
+        <div class="finding">
+
+            <h3>
+                Grade 8 MAPEH
+            </h3>
+
+            <p>
+                The classification results show 40.40% of learners within the Developing classification. The finding may be considered when reviewing the competencies represented in the assessment and planning appropriate reinforcement through existing remediation programs.
+            </p>
+
+        </div>
+
+
+        <div class="finding">
+
+            <h3>
+                Grade 9 Science
+            </h3>
+
+            <p>
+                The corrected classification data show 23.51% Advancing, 45.41% Benchmarking, 21.89% Connecting, and 9.19% Developing, with no learners recorded under Emerging. The results may guide continued reinforcement of the competencies assessed.
+            </p>
+
+        </div>
+
+
+        <div class="finding">
+
+            <h3>
+                Grade 10 MAPEH
+            </h3>
+
+            <p>
+                The MPS of 89.02 and the Advancing classification of 59.21% provide a useful reference for sustaining learner progress while continuing to provide appropriate learning opportunities for learners represented in the other classifications.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="remediation">
+
+        <h3>
+            Role of Existing Remediation Programs
+        </h3>
+
+        <p>
+            The assessment results may be used to guide the implementation of existing remediation programs at San Roque National High School. The findings can help identify competencies where learners may benefit from additional reinforcement and provide a basis for planning appropriate learning activities. Succeeding assessment results may then be reviewed to determine learner progress and inform further instructional planning.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     DATA NOTES
+===================================================== -->
+
+<section class="section">
+
+    <h2 class="section-title">
+        Data Notes
+    </h2>
+
+    <p class="section-subtitle">
+        Considerations for interpreting the assessment results.
+    </p>
+
+
+    <div class="note">
+
+        <strong>Assessment data:</strong>
+        The dashboard uses the MPS and learner-classification data provided for Grades 7–10.
+
+        <br><br>
+
+        <strong>Learner counts:</strong>
+        Learners are represented within each grade-level and learning-area record. The same learner may therefore appear in more than one learning area. Learner counts should not be added across subjects to determine the school's total learner population.
+
+        <br><br>
+
+        <strong>Grade 7 Filipino and Mathematics:</strong>
+        The reported classification counts total 286 against the reference population of 337. This difference is retained as a data validation consideration rather than being assigned to a performance category.
+
+        <br><br>
+
+        <strong>Science Grade 9:</strong>
+        The corrected classification data are reflected in this dashboard: 87 Advancing, 168 Benchmarking, 81 Connecting, 34 Developing, and 0 Emerging.
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<footer>
+
+    San Roque National High School | School Assessment Performance Dashboard
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   OVERALL GRADE MPS
+========================================================= */
+
+const gradeLabels = [
+    "Grade 7",
+    "Grade 8",
+    "Grade 9",
+    "Grade 10"
+];
+
+const gradeMPS = [
+    81.91,
+    81.78,
+    83.64,
+    84.13
+];
+
+
+/* =========================================================
+   LEARNING AREA MPS
+========================================================= */
+
+const subjectLabels = [
+    "Values Education",
+    "MAPEH",
+    "Araling Panlipunan",
+    "Filipino",
+    "Science",
+    "TLE",
+    "English",
+    "Mathematics"
+];
+
+const subjectMPS = [
+    85.11,
+    84.94,
+    83.80,
+    83.38,
+    82.44,
+    81.76,
+    81.51,
+    79.98
+];
+
+
+/* =========================================================
+   GRADE MPS CHART
+========================================================= */
+
+new Chart(
+    document.getElementById("gradeChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: gradeLabels,
+
+            datasets: [
+
+                {
+                    label: "Overall MPS",
+
+                    data: gradeMPS,
+
+                    backgroundColor: "#4472C4",
+
+                    borderColor: "#17365D",
+
+                    borderWidth: 1,
+
+                    borderRadius: 4
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return " MPS: " +
+                                context.raw.toFixed(2);
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: false,
+
+                    min: 75,
+
+                    max: 90,
+
+                    title: {
+
+                        display: true,
+
+                        text: "Mean Percentage Score"
+
+                    }
+
+                },
+
+                x: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "Grade Level"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   LEARNING AREA CHART
+========================================================= */
+
+new Chart(
+    document.getElementById("subjectChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: subjectLabels,
+
+            datasets: [
+
+                {
+                    label: "Overall MPS",
+
+                    data: subjectMPS,
+
+                    backgroundColor: "#5B9BD5",
+
+                    borderColor: "#17365D",
+
+                    borderWidth: 1,
+
+                    borderRadius: 4
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            indexAxis: "y",
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return " MPS: " +
+                                context.raw.toFixed(2);
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    min: 75,
+
+                    max: 90,
+
+                    title: {
+
+                        display: true,
+
+                        text: "Mean Percentage Score"
+
+                    }
+
+                },
+
+                y: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "Learning Area"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CLASSIFICATION DATA
+========================================================= */
+
+const classificationData = {
+
+    7: {
+
+        labels: [
+            "Filipino",
+            "English",
+            "Mathematics",
+            "Science",
+            "Araling Panlipunan",
+            "Values Education",
+            "TLE",
+            "MAPEH"
+        ],
+
+        advancing: [
+            7.42,
+            11.87,
+            7.42,
+            10.98,
+            6.23,
+            6.82,
+            13.95,
+            22.55
+        ],
+
+        benchmarking: [
+            37.39,
+            44.51,
+            37.39,
+            60.24,
+            53.41,
+            56.08,
+            54.01,
+            53.41
+        ],
+
+        connecting: [
+            35.01,
+            35.91,
+            35.01,
+            28.78,
+            35.31,
+            32.64,
+            31.45,
+            19.58
+        ],
+
+        developing: [
+            5.04,
+            7.72,
+            5.04,
+            0,
+            5.04,
+            4.45,
+            0.59,
+            4.45
+        ],
+
+        emerging: [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+
+    },
+
+
+    8: {
+
+        labels: [
+            "Filipino",
+            "English",
+            "Mathematics",
+            "Science",
+            "Araling Panlipunan",
+            "Values Education",
+            "TLE",
+            "MAPEH"
+        ],
+
+        advancing: [
+            21.32,
+            8.38,
+            1.27,
+            12.69,
+            26.65,
+            34.09,
+            11.37,
+            13.13
+        ],
+
+        benchmarking: [
+            43.40,
+            41.12,
+            39.85,
+            45.43,
+            27.41,
+            45.36,
+            43.93,
+            28.54
+        ],
+
+        connecting: [
+            22.84,
+            40.86,
+            29.19,
+            19.80,
+            25.38,
+            11.53,
+            28.94,
+            17.93
+        ],
+
+        developing: [
+            12.44,
+            9.64,
+            29.70,
+            22.08,
+            20.56,
+            9.02,
+            15.76,
+            40.40
+        ],
+
+        emerging: [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+
+    },
+
+
+    9: {
+
+        labels: [
+            "Filipino",
+            "English",
+            "Mathematics",
+            "Science",
+            "Araling Panlipunan",
+            "Values Education",
+            "TLE",
+            "MAPEH"
+        ],
+
+        advancing: [
+            25.95,
+            18.38,
+            5.41,
+            23.51,
+            24.05,
+            39.73,
+            19.88,
+            27.88
+        ],
+
+        benchmarking: [
+            45.95,
+            52.70,
+            46.76,
+            45.41,
+            51.62,
+            40.00,
+            40.64,
+            43.70
+        ],
+
+        connecting: [
+            21.62,
+            27.30,
+            35.95,
+            21.89,
+            13.78,
+            15.41,
+            25.73,
+            28.42
+        ],
+
+        developing: [
+            6.49,
+            1.62,
+            11.89,
+            9.19,
+            10.54,
+            4.86,
+            13.74,
+            0
+        ],
+
+        emerging: [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+
+    },
+
+
+    10: {
+
+        labels: [
+            "Filipino",
+            "English",
+            "Mathematics",
+            "Science",
+            "Araling Panlipunan",
+            "Values Education",
+            "TLE",
+            "MAPEH"
+        ],
+
+        advancing: [
+            26.76,
+            10.42,
+            6.48,
+            14.08,
+            31.12,
+            39.38,
+            11.80,
+            59.21
+        ],
+
+        benchmarking: [
+            39.15,
+            45.07,
+            45.35,
+            49.58,
+            50.43,
+            32.29,
+            46.27,
+            25.38
+        ],
+
+        connecting: [
+            29.30,
+            26.20,
+            25.07,
+            27.89,
+            11.53,
+            14.73,
+            24.22,
+            7.55
+        ],
+
+        developing: [
+            4.79,
+            18.31,
+            23.10,
+            8.45,
+            6.92,
+            13.60,
+            17.70,
+            7.85
+        ],
+
+        emerging: [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+
+    }
+
+};
+
+
+/* =========================================================
+   CLASSIFICATION CHART
+========================================================= */
+
+let classificationChart = null;
+
+
+function createClassificationChart(grade) {
+
+    const data = classificationData[grade];
+
+
+    if (classificationChart) {
+
+        classificationChart.destroy();
+
+    }
+
+
+    classificationChart = new Chart(
+
+        document.getElementById("classificationChart"),
+
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: data.labels,
+
+                datasets: [
+
+                    {
+                        label: "Advancing",
+
+                        data: data.advancing,
+
+                        backgroundColor: "#4472C4"
+                    },
+
+                    {
+                        label: "Benchmarking",
+
+                        data: data.benchmarking,
+
+                        backgroundColor: "#70AD47"
+                    },
+
+                    {
+                        label: "Connecting",
+
+                        data: data.connecting,
+
+                        backgroundColor: "#FFC000"
+                    },
+
+                    {
+                        label: "Developing",
+
+                        data: data.developing,
+
+                        backgroundColor: "#ED7D31"
+                    },
+
+                    {
+                        label: "Emerging",
+
+                        data: data.emerging,
+
+                        backgroundColor: "#A5A5A5"
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                indexAxis: "y",
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                scales: {
+
+                    x: {
+
+                        stacked: true,
+
+                        min: 0,
+
+                        max: 100,
+
+                        title: {
+
+                            display: true,
+
+                            text: "Percentage of Learners"
+
+                        },
+
+                        ticks: {
+
+                            callback: function(value) {
+
+                                return value + "%";
+
+                            }
+
+                        }
+
+                    },
+
+                    y: {
+
+                        stacked: true,
+
+                        title: {
+
+                            display: true,
+
+                            text: "Learning Area"
+
+                        }
+
+                    }
+
+                },
+
+                plugins: {
+
+                    tooltip: {
+
+                        callbacks: {
+
+                            label: function(context) {
+
+                                return context.dataset.label +
+                                    ": " +
+                                    context.raw.toFixed(2) +
+                                    "%";
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+    updateClassificationText(grade);
+
+}
+
+
+/* =========================================================
+   CLASSIFICATION INTERPRETATION
+========================================================= */
+
+function updateClassificationText(grade) {
+
+    const analysis =
+        document.getElementById("classificationAnalysis");
+
+    const remediation =
+        document.getElementById("classificationRemediation");
+
+
+    if (grade == 7) {
+
+        analysis.innerHTML = `
+
+            <h3>
+                Analysis and Interpretation
+            </h3>
+
+            <p>
+                The Grade 7 classification results show that a substantial proportion of the reported learners are within the Benchmarking and Connecting classifications across the learning areas. The results may provide useful information for reviewing the competencies assessed and determining where continued reinforcement may be beneficial. The classification data for Filipino and Mathematics also contain a reporting difference that should be considered when interpreting the learner distribution.
+            </p>
+
+        `;
+
+
+        remediation.innerHTML = `
+
+            <h3>
+                Assessment and Instructional Response
+            </h3>
+
+            <p>
+                Existing remediation programs may provide additional learning opportunities for learners who require further reinforcement of specific competencies. The results may help guide the selection of competencies for remediation while the Grade 7 reporting difference may be reviewed to support more complete monitoring in succeeding assessment cycles.
+            </p>
+
+        `;
+
+    }
+
+
+    else if (grade == 8) {
+
+        analysis.innerHTML = `
+
+            <h3>
+                Analysis and Interpretation
+            </h3>
+
+            <p>
+                The Grade 8 classification results show different learner distributions across the learning areas. MAPEH records 40.40% of learners within the Developing classification, while Mathematics records 29.70%. These results may provide useful information for reviewing the competencies assessed and identifying learners who may benefit from additional learning opportunities.
+            </p>
+
+        `;
+
+
+        remediation.innerHTML = `
+
+            <h3>
+                Assessment and Instructional Response
+            </h3>
+
+            <p>
+                Existing remediation programs may provide focused reinforcement for the competencies reflected in the results. The assessment findings can help guide the selection of learning activities and learner support, while succeeding assessments may be used to monitor changes in learner performance.
+            </p>
+
+        `;
+
+    }
+
+
+    else if (grade == 9) {
+
+        analysis.innerHTML = `
+
+            <h3>
+                Analysis and Interpretation
+            </h3>
+
+            <p>
+                The Grade 9 classification results show a substantial proportion of learners within the Benchmarking classification across several learning areas. In Science, the corrected results show 23.51% Advancing, 45.41% Benchmarking, 21.89% Connecting, and 9.19% Developing, with no learners recorded under Emerging. The results may guide continued reinforcement of the competencies assessed.
+            </p>
+
+        `;
+
+
+        remediation.innerHTML = `
+
+            <h3>
+                Assessment and Instructional Response
+            </h3>
+
+            <p>
+                Existing remediation programs may be used to provide additional support for learners who continue to require reinforcement of specific competencies. The assessment results can help guide learning activities while succeeding assessments provide information that may be used in planning further instructional support.
+            </p>
+
+        `;
+
+    }
+
+
+    else {
+
+        analysis.innerHTML = `
+
+            <h3>
+                Analysis and Interpretation
+            </h3>
+
+            <p>
+                The Grade 10 results show a substantial proportion of learners within the Advancing and Benchmarking classifications in several learning areas. MAPEH records 59.21% of learners within the Advancing classification. The results provide a useful reference for sustaining learner progress while continuing to provide appropriate learning opportunities for learners represented in the other classifications.
+            </p>
+
+        `;
+
+
+        remediation.innerHTML = `
+
+            <h3>
+                Assessment and Instructional Response
+            </h3>
+
+            <p>
+                Existing remediation programs may continue to provide support based on the competencies and learner classifications reflected in the assessment. The results may also provide useful information for sustaining practices that support learner progress and for identifying learners who may benefit from additional reinforcement.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE CLASSIFICATION
+========================================================= */
+
+createClassificationChart(8);
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function goTo(id) {
+
+    const section =
+        document.getElementById(id);
+
+
+    if (section) {
+
+        section.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+        });
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
